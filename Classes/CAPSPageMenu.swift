@@ -82,6 +82,7 @@ public enum CAPSPageMenuOption {
     case ScrollAnimationDurationOnMenuItemTap(Int)
     case CenterMenuItems(Bool)
     case HideTopMenuBar(Bool)
+    case MenuItemTextAttributes([String: AnyObject])
 }
 
 public class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
@@ -94,6 +95,7 @@ public class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureReco
     var menuItems : [MenuItemView] = []
     var menuItemWidths : [CGFloat] = []
     
+    public var menuItemTextAttributes: [String: AnyObject]?
     public var menuHeight : CGFloat = 34.0
     public var menuMargin : CGFloat = 15.0
     public var menuItemWidth : CGFloat = 111.0
@@ -223,6 +225,8 @@ public class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureReco
                     centerMenuItems = value
                 case let .HideTopMenuBar(value):
                     hideTopMenuBar = value
+                case let .MenuItemTextAttributes(value):
+                    menuItemTextAttributes = value
                 }
             }
             
@@ -418,10 +422,12 @@ public class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureReco
             //**************************拡張ここまで*************************************
             
             // Set title depending on if controller has a title set
-            if controller.title != nil {
-                menuItemView.titleLabel!.text = controller.title!
+            let title = controller.title != nil ? controller.title! : "Menu \(Int(index) + 1)"
+            
+            if let menuItemTextAttributes = menuItemTextAttributes {
+                menuItemView.titleLabel!.attributedText = NSAttributedString(string: title, attributes: menuItemTextAttributes)
             } else {
-                menuItemView.titleLabel!.text = "Menu \(Int(index) + 1)"
+                menuItemView.titleLabel!.text = title
             }
             
             // Add separator between menu items when using as segmented control
